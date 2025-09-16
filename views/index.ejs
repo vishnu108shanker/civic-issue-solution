@@ -1,0 +1,499 @@
+<%- include("partials/header") %>
+
+<!-- HERO -->
+<section class="container my-5">
+  <div class="row align-items-center gx-5">
+    <div class="col-lg-7">
+      <h1 class="display-5 fw-bold">JAN SAMADHAN PORTAL</h1>
+      <p class="lead text-muted">
+        Fast. Transparent. Accountable. Report civic problems, track them in real-time and see how departments perform — all in one place.
+      </p>
+
+      <div class="d-flex gap-2 mb-3">
+        <a href="/issue" class="btn btn-primary btn-lg">Lodge an Issue</a>
+        <a href="/trackstatus" class="btn btn-outline-primary btn-lg">Track Status</a>
+        <button class="btn btn-outline-success btn-lg" data-bs-toggle="modal" data-bs-target="#quickLodgeModal">Quick Lodge</button>
+      </div>
+
+      <div class="row text-center text-sm-start mt-4">
+        <div class="col-6 col-sm-3">
+          <div class="small text-muted">Avg Resolution</div>
+          <div class="h4 fw-bold text-info" id="statAvgRes">--</div>
+        </div>
+        <div class="col-6 col-sm-3">
+          <div class="small text-muted">Total Issues</div>
+          <div class="h4 fw-bold" id="statTotal">--</div>
+        </div>
+        <div class="col-6 col-sm-3 mt-3 mt-sm-0">
+          <div class="small text-muted">Resolved</div>
+          <div class="h4 fw-bold text-success" id="statResolved">--</div>
+        </div>
+        <div class="col-6 col-sm-3 mt-3 mt-sm-0">
+          <div class="small text-muted">Citizen Score</div>
+          <div class="h4 fw-bold text-warning" id="statScore">--</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-5 d-none d-lg-block">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h5 class="card-title">Quick Track</h5>
+          <p class="text-muted small">Enter UID & token to view instant updates (prototype).</p>
+          <form id="heroTrackForm" class="row g-2">
+            <div class="col-12">
+              <input id="heroUid" class="form-control" placeholder="Aadhaar (12 digits)" aria-label="Aadhaar">
+            </div>
+            <div class="col-12">
+              <input id="heroToken" class="form-control" placeholder="Token (e.g. TOK123456)" aria-label="Token">
+            </div>
+            <div class="col-12 text-end">
+              <button class="btn btn-primary btn-sm" type="submit">Check</button>
+            </div>
+          </form>
+          <hr>
+          <h6 class="mt-2">How it helps</h6>
+          <ul class="small text-muted">
+            <li>Photo evidence speeds verification</li>
+            <li>Transparent timeline & receipts</li>
+            <li>Department credit-score for accountability</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURE CARDS -->
+<section class="container my-4">
+  <div class="card-grid">
+    <a href="/issue" class="card" aria-label="Lodge an issue">
+      <h2>📝 Lodge Issues</h2>
+      <p>Upload photos, tag a location, add voice notes — we capture everything you need.</p>
+      <small class="text-muted">Fast reporting with evidence.</small>
+    </a>
+
+    <a href="/trackstatus" class="card" aria-label="Track status">
+      <h2>🔎 Track Status</h2>
+      <p>Realistic timelines and downloadable receipts let you follow progress.</p>
+      <small class="text-muted">Stay informed at every step.</small>
+    </a>
+
+    <a href="/faqs" class="card" aria-label="FAQs">
+      <h2>❓ FAQs</h2>
+      <p>All common questions — registration, Aadhaar, timelines and more.</p>
+      <small class="text-muted">Clear guide for citizens.</small>
+    </a>
+
+    <a href="/financial" class="card" aria-label="Financial releases">
+      <h2>📑 Financial Releases</h2>
+      <p>Noticeboard of government releases with concise summaries.</p>
+      <small class="text-muted">Transparency in spending.</small>
+    </a>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="container my-5">
+  <h3 class="mb-3">How it works</h3>
+  <div class="row g-3">
+    <div class="col-md-4">
+      <div class="card p-3 shadow-sm h-100">
+        <h5>1. Report</h5>
+        <p class="text-muted small">Provide details, proof and location. Aadhaar-linked to ensure accountability.</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card p-3 shadow-sm h-100">
+        <h5>2. Track</h5>
+        <p class="text-muted small">Get a token, track timeline and receive officer notes and receipts.</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card p-3 shadow-sm h-100">
+        <h5>3. Resolve & Score</h5>
+        <p class="text-muted small">Resolution updates affect department credit-scores — improving governance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LATEST NOTICES -->
+<section class="container my-5">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">Latest Notices</h3>
+    <a href="/financial" class="small">View all →</a>
+  </div>
+
+  <div class="list-group">
+    <div class="list-group-item d-flex justify-content-between align-items-start shadow-sm mb-2">
+      <div>
+        <div class="fw-semibold">Road Repair Grant Released — District A</div>
+        <div class="small text-muted">₹120 Crore allocated for emergency road repair after monsoon — 12 Sep 2025</div>
+      </div>
+      <div class="text-end">
+        <button class="btn btn-outline-primary btn-sm notice-sum">AI Summarise</button>
+      </div>
+    </div>
+
+    <div class="list-group-item d-flex justify-content-between align-items-start shadow-sm mb-2">
+      <div>
+        <div class="fw-semibold">Sanitation Drive Funding</div>
+        <div class="small text-muted">Sanitation grants for 50 localities — 05 Sep 2025</div>
+      </div>
+      <div class="text-end">
+        <button class="btn btn-outline-primary btn-sm notice-sum">AI Summarise</button>
+      </div>
+    </div>
+
+    <div class="list-group-item d-flex justify-content-between align-items-start shadow-sm">
+      <div>
+        <div class="fw-semibold">Smart Streetlight Upgrade</div>
+        <div class="small text-muted">Pilot project announced for energy-efficient streetlights — 28 Aug 2025</div>
+      </div>
+      <div class="text-end">
+        <button class="btn btn-outline-primary btn-sm notice-sum">AI Summarise</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="noticeSummaryBox" class="mt-3 d-none card p-3 shadow-sm">
+    <strong>Summary:</strong>
+    <p id="noticeSummaryText" class="mb-0 text-muted"></p>
+  </div>
+</section>
+
+<!-- ABOUT / MISSION & TEAM -->
+<section class="container my-5">
+  <div class="row gx-4">
+    <div class="col-lg-7">
+      <h3>About Us</h3>
+      <p class="text-muted">
+        Jan Samadhan Portal started as a college project that grew into a citizen-first platform focused on transparency and accountability.
+        Our mission is simple: <strong>empower citizens</strong> with tools to report civic problems, hold public departments accountable,
+        and turn data into actionable improvement.
+      </p>
+
+      <h5 class="mt-4">Our Vision</h5>
+      <p class="text-muted small">
+        A city where every complaint leads to action, where departments learn from data, and where citizens trust the system.
+      </p>
+
+      <h5 class="mt-4">Core Values</h5>
+      <ul class="text-muted small">
+        <li>Transparency: Open records & receipts for every lodged issue</li>
+        <li>Accountability: Department credit-scores encourage performance</li>
+        <li>Inclusivity: Easy reporting with images, voice notes & minimal friction</li>
+      </ul>
+    </div>
+
+    <div class="col-lg-5">
+      <h5>Our Team</h5>
+      <div class="list-group shadow-sm">
+                <div class="list-group-item">MR FRESHER Suryansh</div>
+
+        <div class="list-group-item">Vishnu <span class="badge bg-primary float-end"></span></div>
+        <div class="list-group-item">Muskan</div>
+        <div class="list-group-item">Anshika</div>
+        <div class="list-group-item">SHIVANSH</div>
+        <div class="list-group-item">Anoop</div>
+      </div>
+
+      <h6 class="mt-3">Follow Our Work</h6>
+      <p class="small text-muted mb-0">
+        Facebook · Twitter · Instagram · LinkedIn<br>
+        (links in Contact page)
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS (carousel) -->
+<section class="container my-5">
+  <h3 class="mb-3">Citizen Voices</h3>
+  <div id="testiCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <div class="card p-3 shadow-sm">
+          <div class="fw-semibold">"Quick response — drain cleared in 24 hours!"</div>
+          <div class="small text-muted">— Priya, Local resident</div>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <div class="card p-3 shadow-sm">
+          <div class="fw-semibold">"The tracking receipt was helpful during follow up with authorities."</div>
+          <div class="small text-muted">— Ramesh, Shop-owner</div>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <div class="card p-3 shadow-sm">
+          <div class="fw-semibold">"Easy registration and clear updates."</div>
+          <div class="small text-muted">— Aisha, Teacher</div>
+        </div>
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#testiCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#testiCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="container text-center my-5">
+  <div class="card p-4 shadow-sm">
+    <h4 class="mb-3">Be a part of better governance</h4>
+    <p class="text-muted">Report, track and help improve the services you use every day.</p>
+    <div class="d-flex justify-content-center gap-2">
+      <a href="/issue" class="btn btn-primary">Lodge Issue</a>
+      <a href="/register" class="btn btn-outline-primary">Register</a>
+    </div>
+  </div>
+</section>
+
+<!-- QUICK LODGE MODAL -->
+<div class="modal fade" id="quickLodgeModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <form id="quickLodgeForm" class="needs-validation" novalidate>
+        <div class="modal-header">
+          <h5 class="modal-title">Quick Lodge (Prototype)</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Aadhaar (UID)</label>
+              <input id="qlAadhaar" class="form-control" required pattern="\\d{12}" placeholder="12-digit Aadhaar">
+              <div class="invalid-feedback">Enter a valid 12-digit Aadhaar number.</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Location / Landmark</label>
+              <input id="qlLocation" class="form-control" required placeholder="Street / Landmark">
+              <div class="invalid-feedback">Please provide a location.</div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Short description</label>
+              <textarea id="qlDesc" class="form-control" rows="3" required placeholder="Describe the issue"></textarea>
+              <div class="invalid-feedback">Please add a brief description.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Photo (optional)</label>
+              <input id="qlPhoto" type="file" accept="image/*" class="form-control">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Voice note (optional)</label>
+              <input id="qlVoice" type="file" accept="audio/*" class="form-control">
+            </div>
+          </div>
+
+          <div id="qlResult" class="mt-3 d-none alert alert-success"></div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Submit Issue</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Inline scripts for interactions -->
+<script>
+  // Animated counters (prototype values)
+  const stats = { total: 14230, resolved: 10245, avgRes: 6.2, score: 78 };
+  function animateCount(id, to, suffix='') {
+    const el = document.getElementById(id);
+    let start = 0;
+    const step = Math.max(1, Math.round(to / 60));
+    const iv = setInterval(() => {
+      start += step;
+      if(start >= to) { el.textContent = to + suffix; clearInterval(iv); }
+      else el.textContent = start + suffix;
+    }, 12);
+  }
+  animateCount('statTotal', stats.total);
+  animateCount('statResolved', stats.resolved);
+  document.getElementById('statAvgRes').textContent = stats.avgRes + ' days';
+  animateCount('statScore', stats.score);
+
+  // hero quick track: just redirect to trackstatus and store values in sessionStorage
+  document.getElementById('heroTrackForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const uid = document.getElementById('heroUid').value.trim();
+    const token = document.getElementById('heroToken').value.trim().toUpperCase();
+    if(!/^\d{12}$/.test(uid) || !/^TOK\d{6}$/.test(token)) {
+      alert('Enter valid Aadhaar (12 digits) and token (e.g. TOK123456).');
+      return;
+    }
+    // store values so trackstatus page can prefill (prototype)
+    sessionStorage.setItem('prefill_uid', uid);
+    sessionStorage.setItem('prefill_token', token);
+    window.location.href = '/trackstatus';
+  });
+
+  // Quick lodge form (client-side prototype)
+  const quickForm = document.getElementById('quickLodgeForm');
+  quickForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!quickForm.checkValidity()) { quickForm.classList.add('was-validated'); return; }
+    const uid = document.getElementById('qlAadhaar').value.trim();
+    const loc = document.getElementById('qlLocation').value.trim();
+    const desc = document.getElementById('qlDesc').value.trim();
+    const token = 'TOK' + Math.floor(100000 + Math.random() * 900000);
+    const resBox = document.getElementById('qlResult');
+    resBox.classList.remove('d-none');
+    resBox.innerHTML = `<strong>Issue lodged successfully ✅</strong><div class="small">Token: <b>${token}</b></div><div class="small text-muted">You can track this token from the Track Status page.</div>`;
+    // reset but keep modal open so user can copy token
+    quickForm.reset();
+    quickForm.classList.remove('was-validated');
+  });
+
+  // Notice summarise toggle (prototype)
+  document.querySelectorAll('.notice-sum').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const box = document.getElementById('noticeSummaryBox');
+      const text = 'This notice releases targeted funds to address the issue quickly, focusing on urgent repairs and monitoring.';
+      document.getElementById('noticeSummaryText').textContent = text;
+      box.classList.toggle('d-none');
+      // smooth scroll to summary
+      if(!box.classList.contains('d-none')) box.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  // Prefill trackstatus if values exist (some pages read from sessionStorage)
+  (function prefillOnLoad() {
+    // this page doesn't need prefill, but keep demo-friendly
+    const pUid = sessionStorage.getItem('prefill_uid');
+    const pTok = sessionStorage.getItem('prefill_token');
+    if(pUid || pTok) {
+      // small toast or visual hint
+      const el = document.createElement('div');
+      el.className = 'alert alert-info fixed-top m-3 shadow-sm';
+      el.style.zIndex = 1055;
+      el.innerHTML = `Prefill ready: UID <b>${pUid || '--'}</b> Token <b>${pTok || '--'}</b>. <a href="/trackstatus" class="ms-2">Open tracker</a>`;
+      document.body.appendChild(el);
+      setTimeout(()=> el.remove(), 7000);
+    }
+  })();
+</script>
+
+
+
+<!-- Floating AI Chatbot Icon -->
+<div id="chatbot">
+  <button id="chatbotBtn" class="btn btn-primary rounded-circle shadow-lg">
+    🤖
+  </button>
+
+  <!-- Chat Window -->
+  <div id="chatWindow" class="card shadow-lg d-none">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <span>AI Assistant</span>
+      <button class="btn btn-sm btn-light" id="closeChat">&times;</button>
+    </div>
+    <div class="card-body" id="chatBody">
+      <div class="chat-message bot">Hello! 👋 I’m your AI helper. How can I assist you today?</div>
+    </div>
+    <div class="card-footer">
+      <form id="chatForm" class="d-flex">
+        <input type="text" id="chatInput" class="form-control me-2" placeholder="Type your message..." required>
+        <button type="submit" class="btn btn-success">Send</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Floating Button */
+  #chatbotBtn {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+  }
+
+  /* Chat Window */
+  #chatWindow {
+    position: fixed;
+    bottom: 100px;
+    right: 25px;
+    width: 320px;
+    max-height: 420px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 15px;
+    overflow: hidden;
+    z-index: 1000;
+  }
+
+  #chatBody {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    font-size: 14px;
+    background: #f9f9f9;
+  }
+
+  .chat-message {
+    padding: 8px 12px;
+    margin: 6px 0;
+    border-radius: 12px;
+    max-width: 80%;
+    clear: both;
+  }
+
+  .chat-message.bot {
+    background: #e1f0ff;
+    float: left;
+  }
+
+  .chat-message.user {
+    background: #d4edda;
+    float: right;
+  }
+</style>
+
+<script>
+  const chatbotBtn = document.getElementById("chatbotBtn");
+  const chatWindow = document.getElementById("chatWindow");
+  const closeChat = document.getElementById("closeChat");
+  const chatForm = document.getElementById("chatForm");
+  const chatBody = document.getElementById("chatBody");
+
+  chatbotBtn.addEventListener("click", () => {
+    chatWindow.classList.toggle("d-none");
+  });
+
+  closeChat.addEventListener("click", () => {
+    chatWindow.classList.add("d-none");
+  });
+
+  chatForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const input = document.getElementById("chatInput");
+    const message = input.value.trim();
+    if (message) {
+      chatBody.innerHTML += `<div class="chat-message user">${message}</div>`;
+      input.value = "";
+      chatBody.scrollTop = chatBody.scrollHeight;
+
+      // Fake bot reply
+      setTimeout(() => {
+        chatBody.innerHTML += `<div class="chat-message bot">🤖 This is a demo reply! (Later you can connect me with backend AI)</div>`;
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }, 800);
+    }
+  });
+</script>
+
+<%- include("partials/footer") %>

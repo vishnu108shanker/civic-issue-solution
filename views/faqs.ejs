@@ -1,0 +1,76 @@
+<%- include("partials/header") %>
+
+<div class="container mt-5" style="max-width: 800px;">
+  <h2 class="text-center mb-4">Frequently Asked Questions</h2>
+  
+  <div class="accordion" id="faqAccordion">
+
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#q1">
+          1. How do I lodge a complaint on this portal?
+        </button>
+      </h2>
+      <div id="q1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+        <div class="accordion-body">
+          You can lodge an issue by going to the "Lodge Issues" section on the homepage. Provide details and upload images if necessary.
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q2">
+          2. Can I track the status of my complaint?
+        </button>
+      </h2>
+      <div id="q2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+        <div class="accordion-body">
+          Yes, use the "Track Status" feature with your complaint ID or Aadhaar number to view real-time progress.
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q3">
+          3. Is Aadhaar authentication mandatory?
+        </button>
+      </h2>
+      <div id="q3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+        <div class="accordion-body">
+          Yes, Aadhaar authentication ensures accountability and prevents misuse of the system.
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q4">
+          4. How do I contact support if I face issues?
+        </button>
+      </h2>
+      <div id="q4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+        <div class="accordion-body">
+          You can use the "Contact Us" page to submit queries. Alternatively, reach us on our official social media handles.
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q5">
+          5. Are financial reports verified by the government?
+        </button>
+      </h2>
+      <div id="q5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+        <div class="accordion-body">
+          Yes, all financial release data is officially verified and directly updated from government sources.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<%- include("partials/footer") %>

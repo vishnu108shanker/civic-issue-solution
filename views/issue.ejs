@@ -1,0 +1,56 @@
+<%- include("partials/header") %>
+
+<div class="container mt-5 mb-5" style="max-width: 700px;">
+  <h2 class="text-center mb-4">Lodge an Issue</h2>
+
+  <form id="issueForm">
+    <!-- Aadhaar for validation -->
+    <div class="mb-3">
+      <label for="aadhar" class="form-label">Aadhaar Number</label>
+      <input type="text" class="form-control" id="aadhar" placeholder="Enter 12-digit Aadhaar" required>
+    </div>
+
+    <!-- Upload photo -->
+    <div class="mb-3">
+      <label for="photo" class="form-label">Upload Photo </label>
+      <input type="file" class="form-control" id="photo" accept="image/*">
+    </div>
+
+    <!-- Location -->
+    <div class="mb-3">
+      <label for="location" class="form-label">Location</label>
+      <input type="text" class="form-control" id="location" placeholder="Enter Location or Landmark" required>
+    </div>
+
+    <!-- Voice recording -->
+    <div class="mb-3">
+      <label for="voice" class="form-label">Voice Description </label>
+      <input type="file" class="form-control" id="voice" accept="audio/*">
+    </div>
+
+    <!-- Problem description -->
+    <div class="mb-3">
+      <label for="description" class="form-label">Problem Description</label>
+      <textarea class="form-control" id="description" rows="4" placeholder="Describe your issue..." required></textarea>
+    </div>
+
+    <!-- Submit -->
+    <button type="submit" class="btn btn-danger w-100">Submit Issue</button>
+  </form>
+
+  <!-- Confirmation alert -->
+  <div id="confirmation" class="alert alert-success mt-4 d-none" role="alert"></div>
+</div>
+
+<script>
+  document.getElementById("issueForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const token = "TOK" + Math.floor(100000 + Math.random() * 900000); // random token
+    const confirmBox = document.getElementById("confirmation");
+    confirmBox.innerHTML = `<strong>✅ Issue Lodged!</strong><br>Your token number: <b>${token}</b>`;
+    confirmBox.classList.remove("d-none");
+    this.reset();
+  });
+</script>
+
+<%- include("partials/footer") %>

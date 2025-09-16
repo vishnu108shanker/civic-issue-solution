@@ -1,0 +1,325 @@
+<%- include("partials/header") %>
+
+<div class="container-fluid mt-4 mb-5">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h3 class="mb-0">Citizen Score Dashboard</h3>
+      <small class="text-muted">Performance & accountability metrics across departments</small>
+    </div>
+    <div>
+      <button id="refreshBtn" class="btn btn-outline-primary btn-sm">Refresh Data</button>
+    </div>
+  </div>
+
+  <!-- Top KPIs -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card shadow-sm p-3">
+        <h6>Total Issues</h6>
+        <div class="display-6 fw-bold" id="totalIssues">--</div>
+        <small class="text-muted">since launch</small>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card shadow-sm p-3">
+        <h6>Resolved</h6>
+        <div class="display-6 fw-bold text-success" id="resolvedCount">--</div>
+        <small class="text-muted">issues closed</small>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card shadow-sm p-3">
+        <h6>Pending</h6>
+        <div class="display-6 fw-bold text-warning" id="pendingCount">--</div>
+        <small class="text-muted">awaiting action</small>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card shadow-sm p-3">
+        <h6>Avg Resolution (days)</h6>
+        <div class="display-6 fw-bold text-info" id="avgRes">--</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row gx-4">
+    <!-- LEFT: Overall score -->
+    <div class="col-lg-4">
+      <div class="card shadow-sm p-3 text-center">
+        <h6>Overall Citizen Credit Score</h6>
+        <div class="my-3">
+          <div id="scoreBig" class="display-1 fw-bold">--</div>
+          <div class="small text-muted">0 (poor) — 100 (excellent)</div>
+        </div>
+        <canvas id="doughnutChart" style="max-width:220px; margin:auto;"></canvas>
+        <div class="mt-3">
+          <small class="text-muted">Calculated from department KPIs and citizen feedback</small>
+        </div>
+      </div>
+
+      <div class="card mt-3 shadow-sm p-3">
+        <h6>Quick Actions</h6>
+        <button id="openReportModal" class="btn btn-outline-secondary btn-sm w-100 mb-2">Generate Performance Report (PDF)</button>
+        <button id="openInsights" class="btn btn-outline-primary btn-sm w-100">View Suggested Improvements</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: Department bar chart -->
+    <div class="col-lg-8">
+      <div class="card shadow-sm p-3">
+        <h6>Department Performance</h6>
+        <canvas id="barChart" style="height:320px;"></canvas>
+      </div>
+
+      <div class="card mt-3 shadow-sm p-3">
+        <h6 class="mb-3">Department KPIs</h6>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead>
+              <tr>
+                <th>Department</th>
+                <th>Score</th>
+                <th>Pending</th>
+                <th>Avg Resolution (days)</th>
+                <th>Trend</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="deptTableBody">
+              <!-- filled dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Insights / Suggested improvements -->
+  <div id="insightsPanel" class="mt-4 d-none">
+    <div class="card shadow-sm p-3">
+      <h6>Suggested Improvements</h6>
+      <ul id="suggestionsList" class="mb-0"></ul>
+    </div>
+  </div>
+</div>
+
+<!-- Department detail modal -->
+<div class="modal fade" id="deptModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 id="deptModalTitle" class="modal-title">Department Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p id="deptModalBody"></p>
+        <div class="row">
+          <div class="col-md-6">
+            <p><strong>Pending Issues:</strong> <span id="modalPending"></span></p>
+            <p><strong>Avg Resolution:</strong> <span id="modalAvgRes"></span> days</p>
+          </div>
+          <div class="col-md-6">
+            <p><strong>Recent Activity:</strong></p>
+            <ul id="modalActivity"></ul>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  // -- Prototype dataset (replace with real data later) --
+  const departments = [
+    { key: 'water', name: 'Water Supply', score: 82, weight: 1.4, pending: 450, avgRes: 3.2, trend: 'up', activities: ['Cleared main pipeline leak', 'Meter replacement drive'] },
+    { key: 'roads', name: 'Roads & Highways', score: 68, weight: 1.6, pending: 980, avgRes: 12.5, trend: 'down', activities: ['Pothole patching in zone 7'] },
+    { key: 'san', name: 'Sanitation', score: 74, weight: 1.3, pending: 620, avgRes: 6.8, trend: 'up', activities: ['Street sweeping increased'] },
+    { key: 'elec', name: 'Electricity', score: 59, weight: 1.5, pending: 1100, avgRes: 10.5, trend: 'down', activities: ['Transformer maintenance scheduled'] },
+    { key: 'health', name: 'Health', score: 90, weight: 1.2, pending: 120, avgRes: 2.3, trend: 'up', activities: ['Vaccination camp success'] },
+    { key: 'edu', name: 'Education', score: 78, weight: 1.0, pending: 210, avgRes: 5.6, trend: 'steady', activities: ['Digital classroom rollout'] }
+  ];
+
+  // top-level KPIs
+  function computeKPIs() {
+    const total = departments.reduce((s, d) => s + d.pending, 0) + 500; // add some closed items to indicate volume
+    const resolved = Math.round(total * 0.72);
+    const pending = total - resolved;
+    const avgRes = (departments.reduce((s, d) => s + d.avgRes, 0) / departments.length).toFixed(1);
+
+    document.getElementById("totalIssues").textContent = total;
+    document.getElementById("resolvedCount").textContent = resolved;
+    document.getElementById("pendingCount").textContent = pending;
+    document.getElementById("avgRes").textContent = avgRes;
+  }
+
+  // compute weighted overall score 0..100
+  function computeOverallScore() {
+    const totalWeight = departments.reduce((s, d) => s + d.weight, 0);
+    const weighted = departments.reduce((s, d) => s + d.score * d.weight, 0);
+    return Math.round(weighted / totalWeight);
+  }
+
+  // draw charts
+  let barChart, doughnutChart;
+  function drawCharts() {
+    const deptLabels = departments.map(d => d.name);
+    const deptScores = departments.map(d => d.score);
+
+    // BAR CHART
+    const barCtx = document.getElementById('barChart').getContext('2d');
+    if (barChart) barChart.destroy();
+    barChart = new Chart(barCtx, {
+      type: 'bar',
+      data: {
+        labels: deptLabels,
+        datasets: [{
+          label: 'Department score (0-100)',
+          data: deptScores,
+          borderRadius: 6,
+          barPercentage: 0.6
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true, max: 100 }
+        },
+        plugins: { legend: { display: false } }
+      }
+    });
+
+    // DOUGHNUT chart (overall score)
+    const overall = computeOverallScore();
+    document.getElementById('scoreBig').textContent = overall;
+    const doughCtx = document.getElementById('doughnutChart').getContext('2d');
+    if (doughnutChart) doughnutChart.destroy();
+    doughnutChart = new Chart(doughCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Score', 'Remaining'],
+        datasets: [{
+          data: [overall, 100 - overall],
+          hoverOffset: 4
+        }]
+      },
+      options: {
+        cutout: '70%',
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false }
+        }
+      }
+    });
+  }
+
+  // populate table
+  function populateTable() {
+    const tbody = document.getElementById('deptTableBody');
+    tbody.innerHTML = '';
+    departments.forEach(d => {
+      const tr = document.createElement('tr');
+
+      // score badge color
+      let cls = 'bg-danger text-white';
+      if (d.score >= 80) cls = 'bg-success text-white';
+      else if (d.score >= 65) cls = 'bg-warning text-dark';
+
+      tr.innerHTML = `
+        <td>${d.name}</td>
+        <td><span class="badge ${cls} px-3">${d.score}</span></td>
+        <td>${d.pending}</td>
+        <td>${d.avgRes}</td>
+        <td>${d.trend === 'up' ? '🔺' : d.trend === 'down' ? '🔻' : '➡️' }</td>
+        <td><button class="btn btn-sm btn-outline-primary view-btn" data-key="${d.key}">View</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    // attach handlers for view buttons
+    document.querySelectorAll('.view-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const key = e.currentTarget.dataset.key;
+        const dept = departments.find(x => x.key === key);
+        openDeptModal(dept);
+      });
+    });
+  }
+
+  // open modal with dept details
+  function openDeptModal(dept) {
+    document.getElementById('deptModalTitle').textContent = dept.name;
+    document.getElementById('deptModalBody').textContent = `Performance KPIs and recent activity for ${dept.name}. Current score: ${dept.score}. Weight in overall score: ${dept.weight}.`;
+    document.getElementById('modalPending').textContent = dept.pending;
+    document.getElementById('modalAvgRes').textContent = dept.avgRes;
+    const ul = document.getElementById('modalActivity'); ul.innerHTML = '';
+    dept.activities.forEach(a => {
+      const li = document.createElement('li'); li.textContent = a; ul.appendChild(li);
+    });
+    const modal = new bootstrap.Modal(document.getElementById('deptModal'));
+    modal.show();
+  }
+
+  // suggestions (simple rules)
+  function generateSuggestions() {
+    const suggestions = [];
+    const lowDepts = departments.filter(d => d.score < 65);
+    if (lowDepts.length) {
+      suggestions.push(`Focus on ${lowDepts.map(d=>d.name).join(', ')} with targeted funds and manpower.`);
+    } else {
+      suggestions.push('All departments in healthy range. Maintain current strategies.');
+    }
+    const highPending = departments.sort((a,b) => b.pending - a.pending)[0];
+    suggestions.push(`${highPending.name} has the highest pending queue (${highPending.pending}); allocate extra field teams to reduce backlog.`);
+
+    const list = document.getElementById('suggestionsList');
+    list.innerHTML = '';
+    suggestions.forEach(s => {
+      const li = document.createElement('li'); li.textContent = s; list.appendChild(li);
+    });
+  }
+
+  // refresh handler (simulate data change)
+  document.getElementById('refreshBtn').addEventListener('click', function () {
+    // simulate small random changes
+    departments.forEach(d => {
+      const delta = Math.floor(Math.random() * 5) - 2; // -2..2
+      d.score = Math.max(40, Math.min(95, d.score + delta));
+      d.pending = Math.max(10, d.pending + Math.floor(Math.random()*100-40));
+      d.avgRes = Math.max(1, +(d.avgRes + (Math.random()*2-1)).toFixed(1));
+    });
+    computeKPIs(); drawCharts(); populateTable(); generateSuggestions();
+    document.getElementById('insightsPanel').classList.remove('d-none');
+  });
+
+  // quick report generation mock (download small JSON)
+  document.getElementById('openReportModal').addEventListener('click', function () {
+    const report = {
+      date: new Date().toISOString(),
+      overallScore: computeOverallScore(),
+      departments
+    };
+    const blob = new Blob([JSON.stringify(report, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `citizen_dashboard_report_${Date.now()}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  });
+
+  // open suggested improvements
+  document.getElementById('openInsights').addEventListener('click', function () {
+    document.getElementById('insightsPanel').classList.toggle('d-none');
+  });
+
+  // initial render
+  computeKPIs(); drawCharts(); populateTable(); generateSuggestions();
+</script>
+
+<%- include("partials/footer") %>

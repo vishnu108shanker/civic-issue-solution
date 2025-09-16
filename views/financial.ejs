@@ -1,0 +1,57 @@
+<%- include("partials/header") %>
+
+<div class="container mt-5 mb-5">
+  <h2 class="text-center mb-4">Financial Releases & Notices</h2>
+
+  <div class="list-group">
+
+    <!-- Notice 1 -->
+    <div class="list-group-item mb-3 shadow-sm">
+      <h5>Notice #1: Allocation of Funds for Road Repair (2025)</h5>
+      <p>
+        The government has approved ₹250 Crores for the development and maintenance of highways in the state of Uttar Pradesh. This fund will be distributed among 5 districts…
+      </p>
+      <button class="btn btn-outline-primary btn-sm summarise-btn">AI Summarise</button>
+      <div class="summary mt-2 text-muted d-none">
+        ✅ Roads in UP get ₹250 Crore funding for repair & maintenance.
+      </div>
+    </div>
+
+    <!-- Notice 2 -->
+    <div class="list-group-item mb-3 shadow-sm">
+      <h5>Notice #2: Smart City Project Fund Allocation</h5>
+      <p>
+        ₹500 Crores released under the Smart Cities Mission for improving public utilities, digital infrastructure, and renewable energy adoption in Tier-2 cities like Lucknow, Jaipur, and Bhopal…
+      </p>
+      <button class="btn btn-outline-primary btn-sm summarise-btn">AI Summarise</button>
+      <div class="summary mt-2 text-muted d-none">
+        ✅ ₹500 Crore allocated to Smart Cities for utilities & renewable energy.
+      </div>
+    </div>
+
+    <!-- Notice 3 -->
+    <div class="list-group-item mb-3 shadow-sm">
+      <h5>Notice #3: Education Infrastructure Upgrade</h5>
+      <p>
+        The Ministry of Education has sanctioned ₹120 Crores for building new schools, upgrading classrooms with smart boards, and improving sanitation in rural areas…
+      </p>
+      <button class="btn btn-outline-primary btn-sm summarise-btn">AI Summarise</button>
+      <div class="summary mt-2 text-muted d-none">
+        ✅ ₹120 Crores for rural school upgrades & smart classrooms.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Toggle AI summaries
+  document.querySelectorAll(".summarise-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const summary = btn.nextElementSibling;
+      summary.classList.toggle("d-none");
+    });
+  });
+</script>
+
+<%- include("partials/footer") %>

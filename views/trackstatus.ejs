@@ -1,0 +1,258 @@
+<%- include("partials/header") %>
+
+<div class="container mt-5 mb-5" style="max-width: 900px;">
+  <h2 class="mb-3 text-center">Track Issue Status</h2>
+  <p class="text-center text-muted">Enter your Aadhaar (UID) and token number to get live updates.</p>
+
+  <div class="card shadow-sm p-4">
+    <form id="statusForm" class="row g-3">
+      <div class="col-md-6">
+        <label for="uid" class="form-label">Aadhaar (UID)</label>
+        <input type="text" class="form-control" id="uid" placeholder="Enter 12-digit Aadhaar" required>
+      </div>
+      <div class="col-md-6">
+        <label for="token" class="form-label">Token Number</label>
+        <input type="text" class="form-control" id="token" placeholder="e.g. TOK123456" required>
+      </div>
+
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-primary">Check Status</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Results -->
+  <div id="resultsPanel" class="mt-4 d-none">
+    <!-- Summary card -->
+    <div class="card shadow-sm mb-3">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h5 id="issueTitle" class="card-title mb-1">Issue Summary</h5>
+            <p class="mb-0 text-muted">Token: <strong id="displayToken"></strong> • Lodged by UID: <strong id="displayUid"></strong></p>
+            <p class="mt-2 mb-0" id="displayDesc"></p>
+          </div>
+          <div class="text-end">
+            <div id="statusBadge" class="badge rounded-pill fs-6 py-2 px-3">Status</div>
+            <div class="mt-2 text-end small text-muted" id="lastUpdated"></div>
+          </div>
+        </div>
+
+        <div class="mt-3">
+          <div class="progress" style="height: 10px;">
+            <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+          </div>
+          <small class="text-muted">Progress</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="row gx-4">
+      <!-- Timeline -->
+      <div class="col-lg-6">
+        <h6>Progress Timeline</h6>
+        <ul id="timeline" class="list-group">
+          <!-- dynamically filled -->
+        </ul>
+        <div class="mt-3">
+          <button id="downloadReceipt" class="btn btn-outline-secondary btn-sm">Download Receipt</button>
+          <button id="reportIssueAgain" class="btn btn-link btn-sm">Lodge another issue</button>
+        </div>
+      </div>
+
+      <!-- Map & Details -->
+      <div class="col-lg-6">
+        <h6>Location & Details</h6>
+        <div id="mapPlaceholder" class="border rounded p-3 mb-3" style="height:220px; display:flex; align-items:center; justify-content:center; background:#f5f7fa;">
+          <div class="text-center text-muted">
+            <div style="font-size:28px;">📍</div>
+            <div id="displayLocation">Lat: -- , Lng: --</div>
+            <small class="d-block text-muted">Map placeholder (replace with real map when backend ready)</small>
+          </div>
+        </div>
+
+        <h6>Attachments</h6>
+        <div id="attachments" class="mb-2 text-muted">No attachments uploaded</div>
+
+        <h6>Officer Notes</h6>
+        <div id="officerNotes" class="p-3 border rounded" style="min-height:60px; background:#fff;">
+          <small class="text-muted">No updates yet.</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Not found / error -->
+  <div id="errBox" class="alert alert-warning mt-3 d-none"></div>
+</div>
+
+<script>
+  // Utility: format date
+  function fmtDate(d) {
+    const dt = new Date(d);
+    return dt.toLocaleString();
+  }
+
+  // Simulated DB lookup (prototype only)
+  function simulateLookup(uid, token) {
+    // Very small simulated dataset based on token numeric
+    // If token matches /^TOK\d{6}$/ we return a fake result, else not found.
+    const match = token.match(/^TOK(\d{6})$/);
+    if(!match) return null;
+    const num = parseInt(match[1], 10);
+    // fake location & attachments
+    const locations = [
+      { lat: 26.8467, lng: 80.9462, label: "Near MG Road, Lucknow" },
+      { lat: 28.7041, lng: 77.1025, label: "Sector 12, Delhi" },
+      { lat: 19.07598, lng: 72.87766, label: "Marine Drive, Mumbai" },
+      { lat: 22.5726, lng: 88.3639, label: "Kolkata Central Park" }
+    ];
+    const loc = locations[num % locations.length];
+
+    // Statuses
+    const steps = ["Submitted", "Assigned", "In Progress", "Completed"];
+    const currentStepIndex = Math.min(steps.length - 1, Math.floor((num % 100) / 25)); // 0..3
+    const now = Date.now();
+    const timeline = steps.map((s, i) => ({
+      step: s,
+      time: now - (steps.length - i) * 60 * 60 * 1000 * (num % 5 + 1) // fake times
+    }));
+
+    return {
+      token,
+      uid,
+      title: "Blocked drain & waterlogging near the main junction",
+      description: "Persistent waterlogging after recent rain leading to traffic disruption and mosquito breeding. Needs drain clearance.",
+      location: loc,
+      attachments: [
+        { type: "photo", name: "drain_01.jpg" },
+        (num % 2 === 0) ? { type: "voice", name: "voice_note.mp3" } : null
+      ].filter(Boolean),
+      timeline,
+      currentStepIndex,
+      officerNotes: (currentStepIndex >= 2) ? "Field team assigned and scheduled to clear drain tomorrow morning." : ""
+    };
+  }
+
+  // Badge class by status
+  function badgeClassFor(stepIndex, currentIndex) {
+    if (stepIndex < currentIndex) return "bg-success text-white";
+    if (stepIndex === currentIndex) return "bg-warning text-dark";
+    return "bg-secondary text-white";
+  }
+
+  document.getElementById("statusForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    document.getElementById("errBox").classList.add("d-none");
+
+    const uid = document.getElementById("uid").value.trim();
+    const token = document.getElementById("token").value.trim().toUpperCase();
+
+    // basic validations
+    if (!/^\d{12}$/.test(uid)) {
+      const err = document.getElementById("errBox");
+      err.textContent = "Please enter a valid 12-digit Aadhaar number.";
+      err.classList.remove("d-none");
+      return;
+    }
+    if (!/^TOK\d{6}$/.test(token)) {
+      const err = document.getElementById("errBox");
+      err.textContent = "Please enter token in format: TOK###### (e.g. TOK123456).";
+      err.classList.remove("d-none");
+      return;
+    }
+
+    const data = simulateLookup(uid, token);
+    if (!data) {
+      const err = document.getElementById("errBox");
+      err.textContent = "No record found for the provided UID and token.";
+      err.classList.remove("d-none");
+      return;
+    }
+
+    // populate UI
+    document.getElementById("resultsPanel").classList.remove("d-none");
+    document.getElementById("displayToken").textContent = data.token;
+    document.getElementById("displayUid").textContent = data.uid;
+    document.getElementById("displayDesc").textContent = data.description;
+    document.getElementById("displayLocation").textContent = data.location.label + " (" + data.location.lat.toFixed(4) + ", " + data.location.lng.toFixed(4) + ")";
+    document.getElementById("lastUpdated").textContent = "Last update: " + fmtDate(data.timeline[data.currentStepIndex].time);
+
+    // badge
+    const statusBadge = document.getElementById("statusBadge");
+    statusBadge.textContent = data.timeline[data.currentStepIndex].step;
+    statusBadge.className = "badge rounded-pill fs-6 py-2 px-3 " + (badgeClassFor(data.currentStepIndex, data.currentStepIndex));
+
+    // progress
+    const progressPercent = Math.round((data.currentStepIndex / (data.timeline.length - 1)) * 100);
+    const progressBar = document.getElementById("progressBar");
+    progressBar.style.width = progressPercent + "%";
+    progressBar.setAttribute("aria-valuenow", progressPercent);
+
+    // timeline list
+    const timelineEl = document.getElementById("timeline");
+    timelineEl.innerHTML = "";
+    data.timeline.forEach((item, idx) => {
+      const li = document.createElement("li");
+      li.className = "list-group-item d-flex justify-content-between align-items-start";
+      li.innerHTML = `
+        <div>
+          <div style="font-weight:600">${item.step}</div>
+          <div class="small text-muted">${fmtDate(item.time)}</div>
+        </div>
+        <div>
+          <span class="badge ${badgeClassFor(idx, data.currentStepIndex)}">${(idx <= data.currentStepIndex) ? "✓" : "…"}</span>
+        </div>
+      `;
+      timelineEl.appendChild(li);
+    });
+
+    // attachments
+    const attach = document.getElementById("attachments");
+    attach.innerHTML = "";
+    if (data.attachments.length === 0) attach.textContent = "No attachments";
+    else {
+      data.attachments.forEach(a => {
+        const span = document.createElement("div");
+        span.innerHTML = (a.type === "photo") ? `🖼️ <small>${a.name}</small>` : `🎤 <small>${a.name}</small>`;
+        attach.appendChild(span);
+      });
+    }
+
+    // officer notes
+    document.getElementById("officerNotes").innerHTML = data.officerNotes || "<small class='text-muted'>No officer notes yet.</small>";
+
+    // Download receipt button action
+    document.getElementById("downloadReceipt").onclick = function () {
+      const summary = [
+        `JAN SMDHAN PORTAL - Issue Receipt`,
+        `Token: ${data.token}`,
+        `Aadhaar UID: ${data.uid}`,
+        `Title: ${data.title}`,
+        `Description: ${data.description}`,
+        `Location: ${data.location.label} (${data.location.lat}, ${data.location.lng})`,
+        `Current Status: ${data.timeline[data.currentStepIndex].step}`,
+        `Last Updated: ${fmtDate(data.timeline[data.currentStepIndex].time)}`
+      ].join("\n\n");
+      const blob = new Blob([summary], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${data.token}_receipt.txt`;
+      document.body.appendChild(a); a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    };
+
+    // reset small UI states
+    document.getElementById("errBox").classList.add("d-none");
+  });
+
+  // quick helper to reset for new issue
+  document.getElementById("reportIssueAgain").addEventListener("click", function () {
+    document.getElementById("statusForm").reset();
+    document.getElementById("resultsPanel").classList.add("d-none");
+  });
+</script>
+
+<%- include("partials/footer") %>

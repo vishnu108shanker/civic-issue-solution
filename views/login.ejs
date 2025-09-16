@@ -1,0 +1,23 @@
+<%- include("partials/header") %>
+
+<div class="container mt-5" style="max-width: 450px;">
+  <h2 class="text-center mb-4">Login</h2>
+  <form>
+    <div class="mb-3">
+      <label for="aadhar" class="form-label">Aadhaar Number</label>
+      <input type="text" class="form-control" id="aadhar" placeholder="Enter 12-digit Aadhaar No.">
+    </div>
+
+    <div class="mb-3">
+      <label for="password" class="form-label">Password</label>
+      <input type="password" class="form-control" id="password" placeholder="Enter Password">
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Login</button>
+    <div class="text-center mt-3">
+      <a href="/register">New user? Register here</a>
+    </div>
+  </form>
+</div>
+
+<%- include("partials/footer") %>
