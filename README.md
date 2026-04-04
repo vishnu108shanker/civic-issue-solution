@@ -9,7 +9,6 @@ This platform aims to provide a simple and transparent way to report issues and 
 
 ## Status
 🚧 Work in Progress  
-📅 Prototype will be uploaded by [Tomorrow's Date]
 
 ## Contributors
-- [Your Name]
+- Vishnu Shanker Mishra
